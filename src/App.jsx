@@ -127,11 +127,25 @@ export function App() {
             type="button"
             aria-label={isMusicPlaying ? '暂停背景音乐' : '播放背景音乐'}
             aria-pressed={isMusicPlaying}
-            title={musicError ? '音乐暂未播放，点击重试' : isMusicPlaying ? '暂停背景音乐' : '播放背景音乐'}
+            aria-description={musicError ? '音乐暂未播放，请再次点击重试' : undefined}
             onClick={toggleMusic}
           >
-            <span className="music-record" aria-hidden="true"><span className="record-label">♪</span></span>
-            <span className="music-status" aria-hidden="true">{musicError ? '点击重试' : isMusicPlaying ? '音乐·开' : '音乐·关'}</span>
+            <span className="music-flower" aria-hidden="true">
+              <svg viewBox="0 0 40 40" fill="none">
+                <defs>
+                  <radialGradient id="music-petal" cx="50%" cy="85%" r="85%">
+                    <stop stopColor="#cb8594" />
+                    <stop offset=".55" stopColor="#edc4c9" />
+                    <stop offset="1" stopColor="#fff7ec" />
+                  </radialGradient>
+                </defs>
+                {[0, 60, 120, 180, 240, 300].map(angle => (
+                  <ellipse key={angle} cx="20" cy="11.5" rx="5.8" ry="9" transform={`rotate(${angle} 20 20)`} fill="url(#music-petal)" stroke="#c7929c" strokeWidth=".55" />
+                ))}
+                <circle cx="20" cy="20" r="4" fill="#e4bd7d" stroke="#fff1cc" strokeWidth="1" />
+                <circle cx="19" cy="19" r="1.1" fill="#fff8df" />
+              </svg>
+            </span>
           </button>
         </div>
       </header>
