@@ -18,9 +18,36 @@ export function App() {
   const [dragPosition, setDragPosition] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
   const [latestBlessing, setLatestBlessing] = useState('');
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
+  const [musicError, setMusicError] = useState(false);
+  const musicRef = useRef(null);
+  const musicMutedRef = useRef(false);
   const stageRef = useRef(null);
   const flowerRef = useRef(null);
   const draggingRef = useRef(false);
+
+  function playMusic() {
+    const audio = musicRef.current;
+    audio.volume = 0.32;
+    setMusicError(false);
+    audio.play().catch(() => setMusicError(true));
+  }
+
+  function toggleMusic() {
+    const audio = musicRef.current;
+    if (audio.paused) {
+      musicMutedRef.current = false;
+      playMusic();
+    } else {
+      musicMutedRef.current = true;
+      audio.pause();
+    }
+  }
+
+  function handleWakeGarden() {
+    if (!musicMutedRef.current) playMusic();
+    setFlow((current) => wakeGarden(current));
+  }
 
   function handlePointerDown(event) {
     event.currentTarget.setPointerCapture(event.pointerId);
@@ -79,12 +106,34 @@ export function App() {
         <img src={`${import.meta.env.BASE_URL}assets/secret-garden-desktop.png`} alt="" />
       </picture>
       <div className="garden-veil" aria-hidden="true" />
+      <audio
+        ref={musicRef}
+        src={`${import.meta.env.BASE_URL}assets/garden-lullaby.wav`}
+        loop
+        preload="none"
+        onPlaying={() => setIsMusicPlaying(true)}
+        onPause={() => setIsMusicPlaying(false)}
+        onError={() => { setIsMusicPlaying(false); setMusicError(true); }}
+      />
 
       <header className="stage-header">
         <span className="stage-kicker">A LITTLE GARDEN FOR YOU</span>
-        <span className="stage-progress" aria-label={`许愿进度 ${flow.phase === 'arrival' ? 1 : flow.phase === 'seed' ? 2 : 3} / 3`}>
-          {flow.phase === 'arrival' ? '01' : flow.phase === 'seed' ? '02' : '03'} / 03
-        </span>
+        <div className="stage-tools">
+          <span className="stage-progress" aria-label={`许愿进度 ${flow.phase === 'arrival' ? 1 : flow.phase === 'seed' ? 2 : 3} / 3`}>
+            {flow.phase === 'arrival' ? '01' : flow.phase === 'seed' ? '02' : '03'} / 03
+          </span>
+          <button
+            className={`music-control ${isMusicPlaying ? 'is-playing' : ''}`}
+            type="button"
+            aria-label={isMusicPlaying ? '暂停背景音乐' : '播放背景音乐'}
+            aria-pressed={isMusicPlaying}
+            title={musicError ? '音乐暂未播放，点击重试' : isMusicPlaying ? '暂停背景音乐' : '播放背景音乐'}
+            onClick={toggleMusic}
+          >
+            <span className="music-record" aria-hidden="true"><span className="record-label">♪</span></span>
+            <span className="music-status" aria-hidden="true">{musicError ? '点击重试' : isMusicPlaying ? '音乐·开' : '音乐·关'}</span>
+          </button>
+        </div>
       </header>
 
       {flow.phase === 'arrival' ? (
@@ -92,7 +141,7 @@ export function App() {
           <p className="eyebrow">今天，花园只为你醒来</p>
           <h1>愿你的新一岁<br />盛开成喜欢的模样</h1>
           <p className="intro-copy">这里藏着三份祝福。先唤醒花园，再亲手种下一颗愿望。</p>
-          <button className="primary-button" type="button" onClick={() => setFlow((current) => wakeGarden(current))}>唤醒花园</button>
+          <button className="primary-button" type="button" onClick={handleWakeGarden}>唤醒花园</button>
         </section>
       ) : null}
 
