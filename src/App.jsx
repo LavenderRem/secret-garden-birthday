@@ -75,8 +75,8 @@ export function App() {
   return (
     <main className="garden-stage" data-phase={flow.phase} ref={stageRef}>
       <picture className="garden-background" aria-hidden="true">
-        <source media="(max-width: 700px)" srcSet="/assets/secret-garden-mobile.png" />
-        <img src="/assets/secret-garden-desktop.png" alt="" />
+        <source media="(max-width: 700px)" srcSet={`${import.meta.env.BASE_URL}assets/secret-garden-mobile.png`} />
+        <img src={`${import.meta.env.BASE_URL}assets/secret-garden-desktop.png`} alt="" />
       </picture>
       <div className="garden-veil" aria-hidden="true" />
 
@@ -113,7 +113,7 @@ export function App() {
             style={dragPosition ? { left: dragPosition.x, top: dragPosition.y } : undefined}
             type="button"
           >
-            <img src="/assets/wish-petal.png" alt="" draggable="false" />
+            <img src={`${import.meta.env.BASE_URL}assets/wish-petal.png`} alt="" draggable="false" />
             <span>愿望种子</span>
           </button>
           <button
@@ -148,7 +148,7 @@ export function App() {
                   onClick={() => handlePetal(index)}
                   type="button"
                 >
-                  <img src="/assets/wish-petal.png" alt="" />
+                  <img src={`${import.meta.env.BASE_URL}assets/wish-petal.png`} alt="" />
                   <span>0{index + 1}</span>
                 </button>
               );
